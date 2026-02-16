@@ -2,19 +2,11 @@
   apt:
     name: xdg-utils
 
-- name: install tmux
-  apt:
-    name: tmux
-
-- name: install xclip
-  apt:
-    name: xclip
-
 - name: setup tmux
   become_user: "{{ user }}"
   copy:
     src: files/.tmux.conf
-    dest: /home/{{user}}/
+    dest: /home/{{ user }}/
 
 - name: creates directory
   become_user: "{{ user }}"
