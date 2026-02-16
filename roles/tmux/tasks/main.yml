@@ -8,7 +8,7 @@
     src: files/.tmux.conf
     dest: /home/{{ user }}/
 
-- name: creates directory
+- name: creates tpm directory
   become_user: "{{ user }}"
   file:
     path: /home/{{ user }}/.tmux/plugins/tpm
@@ -35,3 +35,35 @@
 - name: close tmux initialization session
   become_user: "{{ user }}"
   command: "tmux kill-session -t init"
+
+- name: Get github release info for gitmux
+  uri:
+    url: https://api.github.com/repos/{{repository}}/releases/latest
+    return_content: yes
+    body_format: json
+  register: release_info
+
+- name: Get release download URLA for gitmux
+  set_fact:
+    release_url: "{{ release_info.json | json_query(json_filter) | join('') }}"
+  vars:
+    json_filter: assets[?(contains(name, 'linux') && contains(name, 'amd64'))].browser_download_url
+
+- debug:
+    msg: "Downloading release from: {{release_url}}"
+
+- name: creates local bin directory
+  become_user: "{{ user }}"
+  file:
+    path: /home/{{ user }}/.local/bin
+    state: directory
+    
+- name: Download github release for gitmux
+  unarchive:
+    src: "{{release_url}}"
+    dest: /home/{{ user }}/.local/bin
+    mode: 0755
+    remote_src: yes
+    include: gitmux
+    owner: "{{ user }}"
+    group: "{{ user }}"
