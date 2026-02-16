@@ -11,19 +11,35 @@
     name: xclip
 
 - name: setup tmux
-  become_user: "{{user}}"
+  become_user: "{{ user }}"
   copy:
     src: files/.tmux.conf
     dest: /home/{{user}}/
 
 - name: creates directory
-  become_user: "{{user}}"
+  become_user: "{{ user }}"
   file:
-    path: /home/{{user}}/.tmux/plugins/tpm
+    path: /home/{{ user }}/.tmux/plugins/tpm
     state: directory
 
 - name: install tmux plugin manager
-  become_user: "{{user}}"
+  become_user: "{{ user }}"
   git:
     repo: https://github.com/tmux-plugins/tpm
-    dest: /home/{{user}}/.tmux/plugins/tpm
+    dest: /home/{{ user }}/.tmux/plugins/tpm
+    
+- name: ensure tmux session is running for initialization
+  become_user: "{{ user }}"
+  command: "tmux new-session -s init -d"
+
+- name: enable proxy in tmux session
+  become_user: "{{ user }}"
+  command: "tmux send -t init proxyon enter"
+
+- name: install tmux plugins
+  become_user: "{{ user}}"
+  command: "tmux send -t init /home/{{ user }}/.tmux/plugins/tpm/scripts/install_plugins.sh ENTER"
+
+- name: close tmux initialization session
+  become_user: "{{ user }}"
+  command: "tmux kill-session -t init"
