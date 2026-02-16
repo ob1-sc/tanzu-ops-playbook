@@ -12,7 +12,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'elzr/vim-json'
 Plugin 'yggdroot/indentline'
 Plugin 'morhetz/gruvbox'
-Plugin 'hashivim/vim-terraform'
+Plugin 'flazz/vim-colorschemes'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -21,7 +21,8 @@ filetype plugin indent on    " required
 
 " set the colorscheme (silent in case colorscheme has not yet been installed,
 " ie first run before PluginInstall)
-:silent! colorscheme gruvbox
+" :silent! colorscheme gruvbox
+:silent! colorscheme 0x7A69_dark
 set background=dark    
 
 " turn vim-json syntax conceal off (see quotes are shown)
